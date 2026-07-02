@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ukubona · Token Collision</title>
+<link rel="icon" href="https://abikesa.github.io/favicon/assets/favicon-dark.ico" id="favicon-dark"/>
+<link rel="icon" href="https://abikesa.github.io/favicon/assets/favicon-light.ico" media="(prefers-color-scheme:light)" id="favicon-light"/>
+<link rel="preload" href="https://abikesa.github.io/logos/assets/ukubona-dark.png" as="image"/>
+<link rel="preload" href="https://abikesa.github.io/logos/assets/ukubona-light.png" as="image"/>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Mono:wght@300;400;500&display=swap');
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root { --bg: #08080D; --surface: #0F0F18; --surface2: #16161F; --border: #1E1E2E; --amber: #F59E0B; --amber-dim: #92610A; --amber-glow: #F59E0B14; --text: #E8E8F0; --muted: #7070A0; --faint: #2A2A3A; --violet: #A78BFA; --violet-dim: #6D28D9; --violet-glow: #A78BFA10; --green: #4ADE80; --blue: #60A5FA; --rose: #FB7185; --rose-dim: #BE123C; --rose-glow: #FB718514; --serif: 'DM Serif Display', Georgia, serif; --sans: 'DM Sans', system-ui, sans-serif; --mono: 'DM Mono', 'Fira Mono', monospace; --radius: 4px; --max: 880px;}
+[data-theme="light"] { --bg: #F2F0EA; --surface: #FFFFFF; --surface2: #EDEAE2; --border: rgba(0,0,0,0.09); --amber: #92610A; --amber-dim: #7A5208; --amber-glow: #92610A14; --text: #18160F; --muted: #6B6555; --faint: #D9D4C8; --violet: #6D28D9; --violet-dim: #5B21B6; --violet-glow: #6D28D910; --green: #15803D; --blue: #1D4ED8; --rose: #BE123C; --rose-dim: #9F1239; --rose-glow: #BE123C14;}
+html { scroll-behavior: smooth; }body { background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 15px; line-height: 1.65; min-height: 100vh; overflow-x: hidden; transition: background 0.35s, color 0.35s; }
+.site-nav { position: sticky; top: 0; z-index: 300; background: var(--bg); border-bottom: 1px solid var(--border); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }.nav-inner { max-width: var(--max); margin: 0 auto; padding: 0 2rem; height: 52px; display: flex; align-items: center; gap: 0.85rem; }.logo-wrap { width: 28px; height: 28px; flex-shrink: 0; position: relative; }.logo-wrap img { width: 100%; height: 100%; object-fit: contain; position: absolute; top: 0; left: 0; transition: opacity 0.4s; animation: spin 90s linear infinite; }@media (prefers-reduced-motion: reduce) { .logo-wrap img { animation: none; } }@keyframes spin { to { transform: rotate(360deg); } }.logo-dark { opacity: 1; }.logo-light { opacity: 0; }[data-theme="light"] .logo-dark { opacity: 0; }[data-theme="light"] .logo-light { opacity: 1; }
+.nav-brand { font-family: var(--serif); font-size: 0.95rem; color: var(--text); flex: 1; }.nav-sub { font-family: var(--mono); font-size: 0.55rem; color: var(--muted); letter-spacing: 0.08em; margin-left: 0.4rem; }.nav-links { display: flex; gap: 1.25rem; align-items: center; }.nav-links a { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.2s; white-space: nowrap; }.nav-links a:hover { color: var(--amber); }@media (max-width: 640px) { .nav-links { display: none; } }
+.theme-btn { background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; padding: 0.26rem 0.8rem; font-family: var(--mono); font-size: 0.58rem; color: var(--muted); cursor: pointer; letter-spacing: 0.06em; transition: background 0.2s, color 0.2s; flex-shrink: 0; }.theme-btn:hover { color: var(--text); }
+.page { max-width: var(--max); margin: 0 auto; padding: 0 2rem; }
+.hero { padding: 3.5rem 0 2.5rem; border-bottom: 1px solid var(--border); }.eyebrow { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--amber); margin-bottom: 1rem; }h1 { font-family: var(--serif); font-size: clamp(2rem, 5vw, 3.2rem); line-height: 1.1; font-weight: 400; margin-bottom: 0.9rem; }h1 em { font-style: italic; color: var(--amber); }.hero-sub { font-size: 0.9rem; color: var(--muted); font-weight: 300; max-width: 660px; line-height: 1.75; }
+.sl { display: flex; align-items: center; gap: 0.75rem; padding: 2.5rem 0 1.4rem; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }.sl::after { content: ''; flex: 1; height: 1px; background: var(--border); }.sl .tag { color: var(--amber); }
+.relay-wrap { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }.relay-node { background: var(--surface); padding: 1.35rem 1.2rem 1.6rem; }.rn-num { display: block; font-family: var(--mono); font-size: 0.56rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.8rem; }.rn-name { display: block; font-family: var(--serif); font-size: 1.3rem; color: var(--accent); border-bottom: 2px solid var(--accent); padding-bottom: 0.6rem; margin-bottom: 0.65rem; }.rn-sub { display: block; font-family: var(--mono); font-size: 0.54rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.8rem; }.rn-body { font-size: 0.73rem; color: var(--text); font-weight: 300; line-height: 1.6; }@media (max-width: 900px) { .relay-wrap { grid-template-columns: repeat(2, 1fr); } .relay-node { border-bottom: 1px solid var(--border); } }@media (max-width: 560px) { .relay-wrap { grid-template-columns: 1fr; } }
+.mathy { font-family: var(--mono); color: var(--amber); font-size: 0.92em; }[data-theme="light"] .mathy { color: var(--amber-dim); }
+.callout { margin: 1.25rem 0; padding: 1rem 1.25rem; border-left: 2px solid var(--amber-dim); background: var(--amber-glow); border-radius: 0 var(--radius) var(--radius) 0; font-size: 0.83rem; color: var(--text); font-weight: 300; line-height: 1.75; }.callout strong { color: var(--amber); font-weight: 500; }.callout.violet { border-left-color: var(--violet-dim); background: var(--violet-glow); }.callout.rose { border-left-color: var(--rose-dim); background: var(--rose-glow); }.callout-label { display: block; font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--amber); margin-bottom: 0.55rem; }.callout.violet .callout-label { color: var(--violet); }.callout.rose .callout-label { color: var(--rose); }
+.master-table-wrap { overflow-x: auto; margin: 1.25rem 0; }.master-table { width: 100%; border-collapse: collapse; font-size: 0.79rem; min-width: 560px; }.master-table th { font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); text-align: left; padding: 0.5rem 0.7rem; border-bottom: 1px solid var(--border); font-weight: 400; background: var(--surface); }.master-table td { padding: 0.6rem 0.7rem; border-bottom: 1px solid var(--faint); vertical-align: top; font-weight: 300; line-height: 1.55; color: var(--text); font-size: 0.76rem; }.master-table tr:last-child td { border-bottom: none; }.master-table td:first-child { font-family: var(--mono); font-size: 0.74rem; color: var(--amber-dim); white-space: nowrap; padding-right: 1rem; }
+.audit-grid { display: grid; gap: 1.1rem; margin-top: 0.5rem; }.audit-point { padding: 1.4rem 1.5rem; border-left: 3px solid var(--amber); background: var(--surface2); border-radius: 0 var(--radius) var(--radius) 0; }.audit-point.uku { border-left-color: var(--violet); }.audit-label { display: block; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--amber); margin-bottom: 0.6rem; }.audit-point.uku .audit-label { color: var(--violet); }.audit-point p { font-size: 0.85rem; color: var(--text); font-weight: 300; line-height: 1.75; }.audit-point p + p { margin-top: 0.75rem; }
+.pull-quote { font-family: var(--serif); font-style: italic; font-size: 1.2rem; line-height: 1.55; color: var(--amber); padding: 0 0 0 1.1rem; border-left: 2px solid var(--amber-dim); margin: 1.6rem 0; }.pull-quote.blue { color: var(--blue); border-left-color: var(--blue); }.pull-quote.violet { color: var(--violet); border-left-color: var(--violet-dim); }.pull-quote .attr { display: block; font-family: var(--mono); font-style: normal; font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-top: 0.6rem; }
+p.body-text { font-size: 0.85rem; color: var(--text); font-weight: 300; line-height: 1.8; margin-bottom: 1rem; }
+.ep-note { margin-top: 2.5rem; padding: 1.25rem 1.5rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); border-left: 3px solid var(--amber-dim); }.ep-label { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.6rem; }.ep-note p { font-family: var(--serif); font-size: 1.0rem; line-height: 1.65; color: var(--text); }.ep-note em { color: var(--amber); font-style: italic; }
+footer { margin-top: 4rem; border-top: 1px solid var(--border); padding: 1.5rem 2rem; max-width: var(--max); margin-left: auto; margin-right: auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }footer .brand { font-family: var(--serif); font-size: 1rem; color: var(--amber); font-style: italic; }footer .ts { font-family: var(--mono); font-size: 0.62rem; color: var(--muted); letter-spacing: 0.06em; text-align: right; line-height: 1.6; }
+@media (max-width: 580px) { .page { padding: 0 1.25rem; } .hero { padding: 2.5rem 0 2rem; } footer { padding: 1.5rem 1.25rem; }}
+</style>
+</head>
+<body>
+
+<nav class="site-nav" aria-label="Site navigation">
+  <div class="nav-inner">
+    <div class="logo-wrap" aria-hidden="true">
+      <img class="logo-dark" src="https://abikesa.github.io/logos/assets/ukubona-dark.png" alt=""/>
+      <img class="logo-light" src="https://abikesa.github.io/logos/assets/ukubona-light.png" alt=""/>
+    </div>
+    <div class="nav-brand">Ukubona <span class="nav-sub">· Token Collision · Identity Collapse</span></div>
+    <nav class="nav-links" aria-label="External links">
+      <a href="https://twin-os.onrender.com/" target="_blank" rel="noopener">twin-os ↗</a>
+      <a href="https://ukubona-llc.github.io/constitution/" target="_blank" rel="noopener">constitution ↗</a>
+      <a href="https://ukubona-llc.github.io/civilization/" target="_blank" rel="noopener">civilization ↗</a>
+    </nav>
+    <button class="theme-btn" id="theme-btn" aria-label="Toggle colour theme">light</button>
+  </div>
+</nav>
+
+<div class="page">
+
+<div class="hero">
+  <p class="eyebrow">Ukubona LLC · Architecture Archive · 2026</p>
+  <h1>Governance of <em>Identity</em></h1>
+  <p class="hero-sub">A 2-year-old observing their aunt — who heavily resembles their mother — issues a hard categorical rejection: <em>"You are not my mom!"</em> This is not a social misunderstanding. It is a forced argmax collapse over a noisy embedding manifold under time pressure. Here is the formalization of kin recognition failure through the 5-step cognitive pipeline.</p>
+</div>
+
+<div class="sl"><span class="tag">01</span> The 5-Step Pipeline: Kin as Token Collision</div>
+<p class="body-text">When identity is mapped not as discrete labels but as continuous representations, kin networks intentionally or unintentionally create token interference fields in early attachment learning. The pipeline models this transition from continuous signal to forced discrete output.</p>
+
+<div class="master-table-wrap">
+<table class="master-table">
+  <thead>
+    <tr>
+      <th>Stage</th>
+      <th>Operation</th>
+      <th>The "Mom vs. Aunt" Manifestation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>I. Reality</td>
+      <td>Continuous world signal. Uncompressed manifold.</td>
+      <td>Mother and sister exist as overlapping sensory fields. Similar face geometry, similar prosody, shared developmental environment. No identity labels yet; only signal density.</td>
+    </tr>
+    <tr>
+      <td>II. Tokens</td>
+      <td>Discretization (words, faces, events).</td>
+      <td>The brain extracts discrete elements: "familiar voice," "caregiver proxy," "kin presence." Tokenization is lossy—multiple tokens fire for the identical stimulus.</td>
+    </tr>
+    <tr>
+      <td>III. Latent Space</td>
+      <td>Continuous geometric representation of token meaning.</td>
+      <td>Mom and Aunt are vectors in a shared family manifold. Mom → <span class="mathy">μ₁</span> (earliest attachment basin). Aunt → <span class="mathy">μ₂</span> (adjacent basin, shared phonetics). Proximity in embedding space creates a high risk of interference.</td>
+    </tr>
+    <tr>
+      <td>IV. Softmax</td>
+      <td>Competition over embeddings → single selection.</td>
+      <td>The system resolves ambiguity under compression. Score(mom) = cosine(embed, <span class="mathy">μ₁</span>) + history_weight. Score(aunt) = cosine(embed, <span class="mathy">μ₂</span>) + phonetic_overlap. The logits are dangerously close.</td>
+    </tr>
+    <tr>
+      <td>V. Action</td>
+      <td>Collapse into world (speech / behavior update).</td>
+      <td>The system forces an exclusive assignment failure to preserve stability. The margin is too tight, so it outputs a binary label correction out loud: <em>"You are not my mom!"</em></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="callout violet">
+  <span class="callout-label">Comedy as η-Gap Closure</span>
+  <strong>COMEDY = low-margin softmax under forced collapse.</strong> The humor observed by adults stems from a high-stakes identity classifier firing a binary verdict on a socially harmless input. The gap between the expected row and the activated row drops to zero instantly. The child is executing stability enforcement, but the observer's miscalibrated model registers it as comedy.
+</div>
+
+<div class="sl"><span class="tag">02</span> The Audit · Mechanics of Misrecognition</div>
+<div class="audit-grid">
+  <div class="audit-point">
+    <span class="audit-label">Identity Aliasing</span>
+    <p>Because the low-resolution perceptual encoder clusters them together, two different people map onto one high-level identity slot ("mom-like caregiver"). The system does not average them. It picks one dominant binding and treats the other as an impostor signal, resolving the tension with a hard exclusion statement.</p>
+  </div>
+  <div class="audit-point">
+    <span class="audit-label">Forced Discrete Decoding</span>
+    <p>The utterance is not semantics; it is the system forcing a hard argmax collapse because soft attention is unstable. The child's cognitive system cannot maintain a probabilistic dual identity, so it resolves the tension via categorical exclusion to preserve the stability of the attractor basin.</p>
+  </div>
+  <div class="audit-point uku">
+    <span class="audit-label">State Update (<span class="mathy">θ_t</span>)</span>
+    <p>Identity is encoded as a distributable weight row, not a unique biological instance. The confusion is never abstract; it is a real-time resolution of a multi-agent kin graph into a single authorized node. The resulting output is the necessary <span class="mathy">θ_t</span> update ensuring the internal model remains tractable.</p>
+  </div>
+</div>
+
+<div class="ep-note">
+  <div class="ep-label">Phase Boundary</div>
+  <p>Meaning is not in tokens. Meaning is in the moment before Softmax—where multiple realities still coexist in the latent space. Misrecognition, comedy, and systemic panic occur when the boundary collapse happens too late, or on the wrong side of the <span class="mathy">w_i</span> threshold.</p>
+</div>
+
+</div>
+
+<footer>
+  <span class="brand">Ukubona LLC</span>
+  <span class="ts">Architecture Archive · T → M → V → E → S ↺ ∇L · Kampala</span>
+</footer>
+
+<script>
+(function () { 
+  var html = document.documentElement; 
+  var btn = document.getElementById('theme-btn'); 
+  var curr = 'dark';
+  function apply(t) { 
+    curr = t; 
+    html.setAttribute('data-theme', t); 
+    btn.textContent = t === 'dark' ? 'light' : 'dark'; 
+    var fd = document.getElementById('favicon-dark'); 
+    var fl = document.getElementById('favicon-light'); 
+    if (fd && fl) { 
+      fd.rel = t === 'dark' ? 'icon' : 'alternate icon'; 
+      fl.rel = t === 'light' ? 'icon' : 'alternate icon'; 
+    } 
+  }
+  btn.addEventListener('click', function () { apply(curr === 'dark' ? 'light' : 'dark'); });
+  var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches; 
+  apply(prefersDark ? 'dark' : 'light');
+})();
+</script>
+
+</body>
+</html>

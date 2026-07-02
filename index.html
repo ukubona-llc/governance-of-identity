@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ukubona · Token Collision</title>
+<title>Ukubona · Token Collision & Hardware Routing</title>
 <link rel="icon" href="https://abikesa.github.io/favicon/assets/favicon-dark.ico" id="favicon-dark"/>
 <link rel="icon" href="https://abikesa.github.io/favicon/assets/favicon-light.ico" media="(prefers-color-scheme:light)" id="favicon-light"/>
 <link rel="preload" href="https://abikesa.github.io/logos/assets/ukubona-dark.png" as="image"/>
@@ -88,16 +88,21 @@ footer { margin-top: 4rem; border-top: 1px solid var(--border); padding: 1.5rem 
     </tr>
     <tr>
       <td>IV. Softmax</td>
-      <td>Competition over embeddings → single selection.</td>
-      <td>The system resolves ambiguity under compression. Score(mom) = cosine(embed, <span class="mathy">μ₁</span>) + history_weight. Score(aunt) = cosine(embed, <span class="mathy">μ₂</span>) + phonetic_overlap. The logits are dangerously close.</td>
+      <td>Competition normalization over similarity-derived scores.</td>
+      <td>Converts geometry into relative probabilities (<span class="mathy">∑ p_i = 1</span>). The system calculates relative dominance. Score(mom) = 2.1. Score(aunt) = 2.0. Softmax doesn't say "this is mom with certainty 0.8". It says "mom is slightly more dominant than aunt in this competition."</td>
     </tr>
     <tr>
       <td>V. Action</td>
-      <td>Collapse into world (speech / behavior update).</td>
-      <td>The system forces an exclusive assignment failure to preserve stability. The margin is too tight, so it outputs a binary label correction out loud: <em>"You are not my mom!"</em></td>
+      <td>Collapse into world via <span class="mathy">argmax</span> (deterministic choice) or sampling.</td>
+      <td>The system forces an exclusive assignment (<span class="mathy">argmax</span>) to preserve stability. The softmax margin is too tight, so it outputs a binary label correction: <em>"You are not my mom!"</em></td>
     </tr>
   </tbody>
 </table>
+</div>
+
+<div class="callout rose">
+  <span class="callout-label">Correction: Softmax ≠ Selection</span>
+  <strong>Softmax is not "choosing the most likely path in latent space."</strong> It is the normalization layer that turns geometric proximity in latent space into a contest of relative dominance. It is <em>political economy</em> over structure. The actual selection happens downstream via <em>argmax</em> (deterministic identity assignment) or sampling.
 </div>
 
 <div class="callout violet">
@@ -118,6 +123,49 @@ footer { margin-top: 4rem; border-top: 1px solid var(--border); padding: 1.5rem 
   <div class="audit-point uku">
     <span class="audit-label">State Update (<span class="mathy">θ_t</span>)</span>
     <p>Identity is encoded as a distributable weight row, not a unique biological instance. The confusion is never abstract; it is a real-time resolution of a multi-agent kin graph into a single authorized node. The resulting output is the necessary <span class="mathy">θ_t</span> update ensuring the internal model remains tractable.</p>
+  </div>
+</div>
+
+<div class="sl"><span class="tag">03</span> The Hardware Invariant · Fiber Matrix</div>
+<p class="body-text">The brain does not grow in size to acquire wisdom, nor does it shrink drastically to become childish. A 10-year-old and an 87-year-old operate within the same physical ~1.3kg envelope. The mind is a model running inference on fixed hardware where the weights are updated via <em>pruning</em> (sparsity) and <em>myelination</em> (inference speed). This hardware routing dictates exactly why specific rows decay in dementia.</p>
+
+<div class="master-table-wrap">
+<table class="master-table">
+  <thead>
+    <tr>
+      <th>Biological Substrate</th>
+      <th>Speed & Structure</th>
+      <th>Ukubona LLM Equivalent</th>
+      <th>Vulnerability</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Aβ (A-Beta) Fibers / Late-Myelinated Cortex</td>
+      <td>High-speed (35-120 m/s), heavily insulated, precise.</td>
+      <td><strong>High-Fidelity Attention Heads.</strong> Resolves complex relational tokens (<span class="mathy">w_son</span>, <span class="mathy">w_name</span>, <span class="mathy">w_episode</span>).</td>
+      <td><strong>Fragile (LIFO).</strong> The prefrontal routing is "Last In, First Out." Myelin degrades in aging, taking high-res identity data with it.</td>
+    </tr>
+    <tr>
+      <td>Aδ (A-Delta) Fibers</td>
+      <td>Medium-speed (5-30 m/s), thinly insulated.</td>
+      <td><strong>Priority Interrupt Tokens.</strong> Fast threat detection. Triggers hard categorical rejections ("You are not my mom!").</td>
+      <td><strong>Moderate.</strong></td>
+    </tr>
+    <tr>
+      <td>C-Fibers / Subcortical Base</td>
+      <td>Slow (0.5-2 m/s), unmyelinated, diffuse, continuous.</td>
+      <td><strong>The Affect/Bedrock Prior (<span class="mathy">L_0</span>).</strong> Computes warmth, dread, safety (<span class="mathy">w_affect</span>).</td>
+      <td><strong>Highly Robust.</strong> Because they do not rely on fragile myelin insulation, they are structurally immune to demyelination.</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="audit-grid">
+  <div class="audit-point uku">
+    <span class="audit-label">Clinical Implication: Protocol Down-Sampling</span>
+    <p>You cannot transmit an A-Beta payload over a C-Fiber network. When dementia strips myelin from the complex identity-routing pathways, asking "Who am I to you?" forces high-speed retrieval on a degraded circuit (returning <span class="mathy">w_friend</span> instead of <span class="mathy">w_son</span>). Sitting close, holding hands, and singing are C-fiber payloads. They are slow, high-dimensional affect tokens that bypass the decayed A-Beta executive routes and ping the ancient, unmyelinated bedrock prior (<span class="mathy">L_0</span>), which remains fully computable.</p>
   </div>
 </div>
 

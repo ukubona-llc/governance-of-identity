@@ -28,6 +28,7 @@ html { scroll-behavior: smooth; }body { background: var(--bg); color: var(--text
 .pull-quote { font-family: var(--serif); font-style: italic; font-size: 1.2rem; line-height: 1.55; color: var(--amber); padding: 0 0 0 1.1rem; border-left: 2px solid var(--amber-dim); margin: 1.6rem 0; }.pull-quote.blue { color: var(--blue); border-left-color: var(--blue); }.pull-quote.violet { color: var(--violet); border-left-color: var(--violet-dim); }.pull-quote .attr { display: block; font-family: var(--mono); font-style: normal; font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-top: 0.6rem; }
 p.body-text { font-size: 0.85rem; color: var(--text); font-weight: 300; line-height: 1.8; margin-bottom: 1rem; }
 .ep-note { margin-top: 2.5rem; padding: 1.25rem 1.5rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); border-left: 3px solid var(--amber-dim); }.ep-label { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.6rem; }.ep-note p { font-family: var(--serif); font-size: 1.0rem; line-height: 1.65; color: var(--text); }.ep-note em { color: var(--amber); font-style: italic; }
+.video-wrapper { margin: 1.5rem 0 0.6rem; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }.video-container { position: relative; padding-bottom: 56.25%; height: 0; }.video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }.video-caption { font-family: var(--mono); font-size: 0.62rem; color: var(--muted); letter-spacing: 0.03em; margin-bottom: 1.5rem; }
 footer { margin-top: 4rem; border-top: 1px solid var(--border); padding: 1.5rem 2rem; max-width: var(--max); margin-left: auto; margin-right: auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }footer .brand { font-family: var(--serif); font-size: 1rem; color: var(--amber); font-style: italic; }footer .ts { font-family: var(--mono); font-size: 0.62rem; color: var(--muted); letter-spacing: 0.06em; text-align: right; line-height: 1.6; }
 @media (max-width: 580px) { .page { padding: 0 1.25rem; } .hero { padding: 2.5rem 0 2rem; } footer { padding: 1.5rem 1.25rem; }}
 </style>
@@ -100,9 +101,16 @@ footer { margin-top: 4rem; border-top: 1px solid var(--border); padding: 1.5rem 
 </table>
 </div>
 
+<div class="audit-grid">
+  <div class="audit-point">
+    <span class="audit-label">The Math of Softmax</span>
+    <p>Softmax is not a single 0–1 certainty scale; it is a transformation that converts raw scores (logits) into a probability distribution: <span class="mathy">softmax(z_i) = e^{z_i} / ∑_j e^{z_j}</span>. Exponentiation amplifies differences; normalization forces total probability to 1. It turns geometric proximity in latent space into a contest of relative dominance. Latent space is structure; Softmax is political economy over that structure.</p>
+  </div>
+</div>
+
 <div class="callout rose">
   <span class="callout-label">Correction: Softmax ≠ Selection</span>
-  <strong>Softmax is not "choosing the most likely path in latent space."</strong> It is the normalization layer that turns geometric proximity in latent space into a contest of relative dominance. It is <em>political economy</em> over structure. The actual selection happens downstream via <em>argmax</em> (deterministic identity assignment) or sampling.
+  <strong>Softmax is not "choosing the most likely path in latent space."</strong> It produces probabilities. The actual selection happens downstream via <em>argmax</em> (deterministic identity assignment) or sampling (stochastic behavior).
 </div>
 
 <div class="callout violet">
@@ -168,6 +176,64 @@ footer { margin-top: 4rem; border-top: 1px solid var(--border); padding: 1.5rem 
     <p>You cannot transmit an A-Beta payload over a C-Fiber network. When dementia strips myelin from the complex identity-routing pathways, asking "Who am I to you?" forces high-speed retrieval on a degraded circuit (returning <span class="mathy">w_friend</span> instead of <span class="mathy">w_son</span>). Sitting close, holding hands, and singing are C-fiber payloads. They are slow, high-dimensional affect tokens that bypass the decayed A-Beta executive routes and ping the ancient, unmyelinated bedrock prior (<span class="mathy">L_0</span>), which remains fully computable.</p>
   </div>
 </div>
+
+<div class="sl"><span class="tag">04</span> Topology & The Tree Metaphor</div>
+<p class="body-text">The abstraction layer for systems that route information through transformations and collapse it into decisions is inherently topological. It is not a hierarchy; it is a flow topology with feedback loops. An autoencoder is a closed loop that tries to preserve topology under compression.</p>
+
+<div class="master-table-wrap">
+<table class="master-table">
+  <thead>
+    <tr>
+      <th>Tree Layer</th>
+      <th>ML Analogue</th>
+      <th>Pipeline Mapping</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Soil</td>
+      <td>Data-generating reality</td>
+      <td>I. Reality (Uncompressed signal)</td>
+    </tr>
+    <tr>
+      <td>Roots</td>
+      <td>Feature extraction / early encoding</td>
+      <td>II. Tokens (Discretization)</td>
+    </tr>
+    <tr>
+      <td>Trunk</td>
+      <td>Shared representation space</td>
+      <td>III. Embedding / Latent Space</td>
+    </tr>
+    <tr>
+      <td>Branches</td>
+      <td>Task-specific heads / divergence</td>
+      <td>IV. Softmax (Curvature of competition)</td>
+    </tr>
+    <tr>
+      <td>Canopy / Fruit</td>
+      <td>Outputs / actions</td>
+      <td>V. Action (argmax collapse)</td>
+    </tr>
+    <tr>
+      <td>Falling Fruit / Root Absorption</td>
+      <td>Backprop / Error update</td>
+      <td>Feedback (Fruit → Soil)</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p class="body-text">Topology (at its core) is about what remains invariant under deformation. That is exactly what embeddings are: "mom" and "aunt" can move in raw sensory space as lighting, voice, age, and context distort them, but they remain in the same neighborhood structure.</p>
+
+<div class="sl"><span class="tag">05</span> The Original Inspiration</div>
+<p class="body-text">Both the child and Minhaj's punchline are the same computational act: a late-stage collapse of overlapping identity models into a single enforced structure once ambiguity exceeds tolerance. The narrative coherence holds until the threshold is hit, resulting in a hard collapse. The audience experiences the <span class="mathy">η</span>-gap closure as comedy.</p>
+
+<div class="video-wrapper">
+  <div class="video-container">
+    <iframe src="https://www.youtube-nocookie.com/embed/AQ6bNCijt3g?start=1570" title="Why MAGA 2.0 Hates Legal Immigration Too" frameborder="0" allowfullscreen></iframe>
+  </div>
+</div>
+<p class="video-caption">26:10 — The punchline collapse: "They're enforcing hierarchy, almost like a caste system."</p>
 
 <div class="ep-note">
   <div class="ep-label">Phase Boundary</div>
